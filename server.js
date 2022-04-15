@@ -1,7 +1,7 @@
 // Initialize the express and supporting modules
 const express = require("express");
 const path = require("path");
-// const api = require("./public/assets/js/notes");
+const api = require("./routes/index");
 
 // Use port 3001 unless the assigned by hosting provider
 const PORT = process.env.PORT || 3001;
@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Use the api route and public folder
-// app.use("/api", api);
+app.use("/api", api);
 app.use(express.static("public"));
 
 // GET Route for homepage
