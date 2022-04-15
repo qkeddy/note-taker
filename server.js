@@ -27,3 +27,5 @@ app.get('/notes', (req, res) =>
 
 // Start listening on the specified port
 app.listen(PORT, () => console.log(`App listening at http://localhost:${PORT} 🚀`));
+
+// TODO add route for wild card
