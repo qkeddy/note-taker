@@ -7,8 +7,7 @@ let noteList;
 /**
  * If on the notes endpoint, then search for the following elements
  */
-if (window.location.pathname === '/notes') {
-
+if (window.location.pathname === "/notes") {
     noteTitle = document.querySelector(".note-title");
     noteText = document.querySelector(".note-textarea");
     saveNoteBtn = document.querySelector(".save-note");
@@ -16,30 +15,27 @@ if (window.location.pathname === '/notes') {
     noteList = document.querySelectorAll(".list-container .list-group");
 }
 
-
 /**
  * ! Function to show an element
- * @param {object} elem 
+ * @param {object} elem
  * @returns {void} Nothing
  */
-const show = (elem) => elem.style.display = "inline";
-
+const show = (elem) => (elem.style.display = "inline");
 
 /**
- * ! Function to hide an element 
- * @param {object} elem 
+ * ! Function to hide an element
+ * @param {object} elem
  * @returns {void} Nothing
  */
-const hide = (elem) => elem.style.display = "none";
-
+const hide = (elem) => (elem.style.display = "none");
 
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
 /**
  * ! GET notes from storage
- * @returns 
- */ 
+ * @returns
+ */
 const getNotes = () =>
     fetch("/api/notes", {
         method: "GET",
@@ -50,9 +46,9 @@ const getNotes = () =>
 
 /**
  * ! POST a note to storage
- * @param {*} note 
- * @returns 
- */ 
+ * @param {*} note
+ * @returns
+ */
 const saveNote = (note) =>
     fetch("/api/notes", {
         method: "POST",
@@ -64,11 +60,11 @@ const saveNote = (note) =>
 
 /**
  * ! DELETE a note from storage
- * @param {string} id 
+ * @param {string} note_id
  * @returns {void} Nothing
  */
-const deleteNote = (id) =>
-    fetch(`/api/notes/${id}`, {
+const deleteNote = (note_id) =>
+    fetch(`/api/notes/${note_id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -76,22 +72,22 @@ const deleteNote = (id) =>
     });
 
 /**
- * ! Handler to render active notes. 
+ * ! Handler to render active notes.
  * ! If there is a note ID, then set the relevant HTML fields.
- * ! If there is not an active note ID, then 
+ * ! If there is not an active note ID, then
  * @returns {void} Nothing
  */
 const renderActiveNote = () => {
     hide(saveNoteBtn);
 
-    if (activeNote.id) {
-        console.log("***** active note ID *******");
+    if (activeNote.note_id) {
+        console.log(`Rendering active note ID ${activeNote.note_id} 📣`);
         noteTitle.setAttribute("readonly", true);
         noteText.setAttribute("readonly", true);
         noteTitle.value = activeNote.title;
         noteText.value = activeNote.text;
     } else {
-        console.log("***** NO active note ID *******");
+        console.log("Clearing note fields for a new note 🆑");
         noteTitle.removeAttribute("readonly");
         noteText.removeAttribute("readonly");
         noteTitle.value = "";
@@ -100,7 +96,7 @@ const renderActiveNote = () => {
 };
 
 /**
- * ! Handler to create a newNote object and then POST to the API. 
+ * ! Handler to create a newNote object and then POST to the API.
  * ! Once the call back is complete then render the full list of notes
  * ! and the active note.
  * @returns {void} Nothing
@@ -109,7 +105,6 @@ const handleNoteSave = () => {
     const newNote = {
         title: noteTitle.value,
         text: noteText.value,
-        id: 111
     };
     saveNote(newNote).then(() => {
         getAndRenderNotes();
@@ -117,11 +112,10 @@ const handleNoteSave = () => {
     });
 };
 
-
 /**
  * ! Handler for deleting a note. Gets the data-note attribute, sets its value to an empty object
- * !and then rerenders the list of notes and the active note. 
- * @param {object} event 
+ * !and then rerenders the list of notes and the active note.
+ * @param {object} event
  * @returns {void} Nothing
  */
 const handleNoteDelete = (event) => {
@@ -129,9 +123,9 @@ const handleNoteDelete = (event) => {
     event.stopPropagation();
 
     const note = event.target;
-    const noteId = JSON.parse(note.parentElement.getAttribute("data-note")).id;
+    const noteId = JSON.parse(note.parentElement.getAttribute("data-note")).note_id;
 
-    if (activeNote.id === noteId) {
+    if (activeNote.note_id === noteId) {
         activeNote = {};
     }
 
@@ -141,19 +135,20 @@ const handleNoteDelete = (event) => {
     });
 };
 
-
 /**
  * ! Handler to set the activeNote and displays it with the data in the data-note attribute
  * @param {object} event
  * @returns {void} Nothing
  */
 const handleNoteView = (event) => {
+    // Prevent the default behavior as the event will be explicitly handled
     event.preventDefault();
-    console.log("***** activated a note *******");
+
     activeNote = JSON.parse(event.target.parentElement.getAttribute("data-note"));
+        console.log(`Activated a note ${activeNote.note_id} 🎯`);
+
     renderActiveNote();
 };
-
 
 /**
  * ! Handler for setting the activeNote to an empty object and allows the user to enter a new note
@@ -161,14 +156,17 @@ const handleNoteView = (event) => {
  * @returns {void} Nothing
  */
 const handleNewNoteView = (event) => {
+    // Prevent the default behavior as the event will be explicitly handled
+    event.preventDefault();
+
+    console.log("Creating a new note 📝");
+
     activeNote = {};
-    console.log("***** create a new note *******");
-    // TODO build out new note
     renderActiveNote();
 };
 
 /**
- * ! Handler for the save button 
+ * ! Handler for the save button
  * @returns {void} Nothing
  */
 const handleRenderSaveBtn = () => {
@@ -179,11 +177,10 @@ const handleRenderSaveBtn = () => {
     }
 };
 
-
 /**
  * ! Render the list of note titles
  * ! Uses an asynchronous read and load of the data in the notes object
- * @param {object} notes 
+ * @param {object} notes
  * @returns {void} Nothing
  */
 const renderNoteList = async (notes) => {
@@ -233,14 +230,12 @@ const renderNoteList = async (notes) => {
     }
 };
 
-
 /**
- * ! Gets notes from the db and renders them to the sidebar. Uses getNotes promise and 
+ * ! Gets notes from the db and renders them to the sidebar. Uses getNotes promise and
  * ! then passes notes object to renderNotesList
  * @returns {void} Nothing
  */
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
-
 
 /**
  * If on the notes endpoint, then set events listeners for the following elements.
