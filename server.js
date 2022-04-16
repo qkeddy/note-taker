@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3001;
 // Initialize the express app
 const app = express();
 
-// Middleware for parsing JSON and urlencoded form data
+// Express middleware for parsing JSON and urlencoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -29,3 +29,5 @@ app.get('/notes', (req, res) =>
 app.listen(PORT, () => console.log(`App listening at http://localhost:${PORT} 🚀`));
 
 // TODO add route for wild card
+// TODO add statues
+// TODO add delete
