@@ -1,5 +1,9 @@
 # Simple Note Taker
 ![badmath](https://img.shields.io/github/license/qkeddy/note-taker)
+![badmath](https://img.shields.io/github/issues/qkeddy/note-taker)
+![badmath](https://img.shields.io/github/languages/top/qkeddy/note-taker)
+![badmath](https://img.shields.io/github/watchers/qkeddy/note-taker)
+![badmath](https://img.shields.io/github/forks/qkeddy/note-taker)
 
 ## Description
 A simple note taking application that can be used to write and save notes. This virtually full-stack application uses an Express.js back end and saves and retrieves note data from a persisted JSON file written to the file system.
