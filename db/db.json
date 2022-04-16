@@ -48,5 +48,10 @@
         "title": "asdf",
         "text": "asdfasdf",
         "note_id": "note-taker-2aj1w02l222e50b"
+    },
+    {
+        "title": "Adding a new note",
+        "text": "The note is here",
+        "note_id": "note-taker-2aj1w1rl222iq04"
     }
 ]
