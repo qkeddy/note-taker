@@ -20,7 +20,7 @@ A link to the GitHub repository can be viewed [here](https://github.com/qkeddy/n
 ## Deployment
 1. Fork and clone project repo
 2. Run `npm install`
-3. Open the CLI in the project folder and run `node index.js`
+3. Start the server `node server.js`  (or deploy to a service like [Heroku](https://heroku.com))
 
 ## Features
 - Simple note taking application that allows the end user to enter and save notes.
