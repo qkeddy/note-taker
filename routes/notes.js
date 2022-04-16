@@ -1,5 +1,5 @@
 const notes = require("express").Router();
-const { readFromFile, readAndAppend } = require("../helpers/fsUtils");
+const { readFromFile, readAndAppend, writeToFile } = require("../helpers/fsUtils");
 const uniqid = require("uniqid");
 
 /**
@@ -11,7 +11,6 @@ notes.get("/", (req, res) => {
     readFromFile("./db/db.json").then((data) => res.json(JSON.parse(data)));
 });
 
-
 /**
  * ! POST Route for a new note
  * @returns {void} Nothing
@@ -19,13 +18,13 @@ notes.get("/", (req, res) => {
 notes.post("/", (req, res) => {
     console.info(`${req.method} request received to add a note`);
 
-    const { title, text } = req.body; 
+    const { title, text } = req.body;
 
     if (req.body) {
         const newNote = {
             title,
             text,
-            note_id: uniqid('note-taker-'),
+            note_id: uniqid("note-taker-"),
         };
 
         readAndAppend(newNote, "./db/db.json");
@@ -37,5 +36,29 @@ notes.post("/", (req, res) => {
     }
 });
 
+/**
+ * ! DELETE Route for a new note
+ * @returns {void} Nothing
+ */
+notes.delete("/:note_id", (req, res) => {
+    console.info(`${req.method} request received to delete a note`);
+    const noteId = req.params.note_id;
+
+    // Read from file
+    readFromFile("./db/db.json")
+        .then((data) => JSON.parse(data))
+        .then((json) => {
+            // Make a new array of all tips except the one with the ID provided in the URL
+            const filteredNotes = json.filter((note) => note.note_id !== noteId);
+            console.log(filteredNotes);
+
+            // Save that array to the filesystem
+            writeToFile("./db/db.json", filteredNotes);
+
+            // Respond to the DELETE request
+            res.json(`Note ${noteId} has been deleted 🚫`);
+            console.log(`Note ${noteId} has been deleted 🚫`);
+        });
+});
 
 module.exports = notes;
