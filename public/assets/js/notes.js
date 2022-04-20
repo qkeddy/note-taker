@@ -4,12 +4,15 @@ let saveNoteBtn;
 let newNoteBtn;
 let noteList;
 
+let editedNote = false;
+
 /**
  * If on the notes endpoint, then search for the following elements
  */
 if (window.location.pathname === "/notes") {
     noteTitle = document.querySelector(".note-title");
     noteText = document.querySelector(".note-textarea");
+    noteId = document.querySelector(".note-id");
     saveNoteBtn = document.querySelector(".save-note");
     newNoteBtn = document.querySelector(".new-note");
     noteList = document.querySelectorAll(".list-container .list-group");
@@ -58,6 +61,22 @@ const saveNote = (note) =>
         body: JSON.stringify(note),
     });
 
+    /**
+ * ! PUT a note update to storage
+ * @param {*} note
+ * @returns
+ */
+const updateNote = (note, noteId) => {
+    console.log("Current URL", window.location.href);
+    return fetch(`/api/notes/${noteId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(note),
+    });
+}
+
 /**
  * ! DELETE a note from storage
  * @param {string} note_id
@@ -86,6 +105,19 @@ const renderActiveNote = () => {
         noteText.setAttribute("readonly", true);
         noteTitle.value = activeNote.title;
         noteText.value = activeNote.text;
+        noteId.value = activeNote.note_id;
+
+        // Event listener to edit the title and text
+        noteTitle.addEventListener("dblclick", () => {
+            noteTitle.removeAttribute("readonly");
+            noteText.removeAttribute("readonly");
+            editedNote = true;
+        });
+        noteText.addEventListener("dblclick", () => {
+            noteTitle.removeAttribute("readonly");
+            noteText.removeAttribute("readonly");
+            editedNote = true;
+        });
     } else {
         console.log("Clearing note fields for a new note 🆑");
         noteTitle.removeAttribute("readonly");
@@ -102,14 +134,27 @@ const renderActiveNote = () => {
  * @returns {void} Nothing
  */
 const handleNoteSave = () => {
-    const newNote = {
+    const noteContent = {
         title: noteTitle.value,
         text: noteText.value,
     };
-    saveNote(newNote).then(() => {
-        getAndRenderNotes();
-        renderActiveNote();
-    });
+
+    if (editedNote) {
+        console.log("NOTE ID: ", noteId.value);
+        console.log("NOTE CONTENT: ", noteContent);
+        updateNote(noteContent, noteId.value).then(() => {
+            // Now that edited note has been isolated, set back to false
+            console.log("Got Here");
+            editedNote = false;
+            getAndRenderNotes();
+            renderActiveNote();
+        })
+    } else {
+        saveNote(noteContent).then(() => {
+            getAndRenderNotes();
+            renderActiveNote();
+        });
+    }
 };
 
 /**
@@ -145,7 +190,7 @@ const handleNoteView = (event) => {
     event.preventDefault();
 
     activeNote = JSON.parse(event.target.parentElement.getAttribute("data-note"));
-        console.log(`Activated a note ${activeNote.note_id} 🎯`);
+    console.log(`Activated a note ${activeNote.note_id} 🎯`);
 
     renderActiveNote();
 };
@@ -166,7 +211,7 @@ const handleNewNoteView = (event) => {
 };
 
 /**
- * ! Handler for the save button
+ * ! Handler for the save button. Note that this is directly handling the input validation and once the save button appears, there is no further validation until you get to the notes.js route.
  * @returns {void} Nothing
  */
 const handleRenderSaveBtn = () => {

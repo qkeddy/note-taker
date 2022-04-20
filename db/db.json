@@ -1,7 +1,12 @@
 [
     {
-        "title": "Barbara Test",
+        "title": "Barbarax",
         "text": "This is Barbara's note",
         "note_id": "note-taker-2aj2073l225dfwn"
+    },
+    {
+        "title": "Joemz",
+        "text": "This is a test",
+        "note_id": "note-taker-2aj18wal26o37b7"
     }
 ]
